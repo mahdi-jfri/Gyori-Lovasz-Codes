@@ -79,7 +79,7 @@ def main():
     pre = [v for v in inst.non_terminals() if all(t < K for t in inst.out_adj[v])]
     others = sorted(set(inst.non_terminals()) - set(pre))
     edges = [(u, v) for u in inst.non_terminals() for v in inst.out_adj[u]]
-    print("k = %d, %d pre-terminals, %d edges, %d x %d other vertices, cap = %s"
+    print("k = %d, %d pre-terminals, %d distinct edges, %d x %d other vertices, cap = %s"
           % (K, len(pre), len(edges), len(others), args.copies, inst.cap))
 
     assert all(len(inst.out_adj[v]) == 2 for v in pre)
@@ -93,7 +93,7 @@ def main():
     for i, (u, v) in enumerate(edges):
         if not fails(delete_edge(inst, u, v), [u] + inst.in_adj[u]):
             sys.exit("deleting %s -> %s preserves the condition" % (name[u], name[v]))
-        report("edges", i + 1, len(edges), start)
+        report("edge deletions", i + 1, len(edges), start)
     print("all %d edge deletions break the condition" % len(edges))
 
     if args.skip_contractions:
