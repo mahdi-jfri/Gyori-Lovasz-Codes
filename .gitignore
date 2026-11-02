@@ -72,3 +72,6 @@ Testing/
 __pycache__/
 *.pyc
 .venv/
+
+# Lean / Lake build products and downloaded dependencies
+lean/.lake/
