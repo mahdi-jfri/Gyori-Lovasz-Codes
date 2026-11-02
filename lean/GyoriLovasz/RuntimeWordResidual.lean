@@ -123,7 +123,7 @@ theorem wordBestArc_cost (s : WordResidual n m) (B : Nat) (bound : WordResidualB
     (fun a => (wordScore_bounds s B bound a).2)
   simp only [allResidualArcs_length] at cost
   have scan : (Costed.filterArgminWords (wordEligible s u v) (wordScore s) (allResidualArcs m)).2 ≤
-      2 * m * (180 * B + 398) + 2 := by convert cost using 1 <;> ring
+      2 * m * (180 * B + 398) + 2 := by convert cost using 1; ring
   simp only [wordBestArc, Costed.enumerateArcs_value, Costed.enumerateArcs_cost]
   change (2 * m * m + 7 * m + 3) +
     (Costed.filterArgminWords (wordEligible s u v) (wordScore s) (allResidualArcs m)).2 + 1 ≤ _

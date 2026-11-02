@@ -82,7 +82,8 @@ theorem normalizeSigned_length (x : SignedWord) :
   simp only [normalizeSigned, normalize_length]
   apply Nat.size_le_size
   obtain ⟨negative, digits⟩ := x
-  cases negative <;> simp [signedValue] <;> omega
+  cases negative <;> simp [signedValue]
+  omega
 
 theorem normalizeSigned_length_of_value (x : SignedWord) (z : Int) (B : Nat)
     (valueCorrect : signedValue x = z) (bitBound : z.natAbs.size ≤ B) :

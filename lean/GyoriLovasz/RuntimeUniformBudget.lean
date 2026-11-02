@@ -63,7 +63,7 @@ theorem restoreContract_uniform (p : Fin (m + 1)) (i : Fin k) (reverse : Vector 
     (restoreContract p i reverse labels).2 ≤ singleRestoreCeiling N := by
   apply (restoreContract_cost p i reverse labels).trans
   unfold singleRestoreCeiling
-  gcongr <;> omega
+  gcongr; omega
 
 theorem restoreTerminal_uniform (p : Fin (m + 1)) (i : Fin (l + 1)) (reverse : Vector (Fin m) (m + 1))
     (labels : Vector (Fin l) m) (N : Nat) (hn : m + 1 ≤ N) :

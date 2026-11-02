@@ -14,7 +14,7 @@ theorem roundShape_no_roots (s : Input n k) (selected : Vector Bool k)
     rw [roundShape_indices]
     simp [GyoriLovasz.retain, outside]
   have len := List.length_pos_of_mem mem
-  simpa [empty] using len
+  simp [empty] at len
 
 theorem roundShape_no_vertices (s : Input n k) (selected : Vector Bool k) (bound : Nat) (h : Valid s bound)
     (empty : (roundShape s selected).1.rootsCount = 0)

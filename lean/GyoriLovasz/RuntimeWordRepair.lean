@@ -16,7 +16,8 @@ theorem repairReduced_value (s : WordResidual n m) (a : Fin m) :
 
 theorem negative_value (w : SignedWord) : w.negative = true ↔ signedValue w < 0 := by
   rcases w with ⟨b, digits⟩
-  cases b <;> simp [signedValue] <;> omega
+  cases b <;> simp [signedValue]
+  omega
 
 abbrev WordRepairOutput (n m : Nat) := Vector (List Bool) m × Vector SignedWord n
 

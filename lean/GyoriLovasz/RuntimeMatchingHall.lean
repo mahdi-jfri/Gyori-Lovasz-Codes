@@ -12,9 +12,9 @@ theorem saturates_card (allowed : Fin l → Fin r → Bool) (S : Finset (Fin l))
   classical
   obtain ⟨f, inj, edge⟩ := h
   let g : S → ↥(S.biUnion (neighborFamily allowed)) := fun i =>
-    ⟨f ⟨i.val, by simpa using i.property⟩,
+    ⟨f ⟨i.val, by simp⟩,
       Finset.mem_biUnion.mpr ⟨i.val, i.property,
-        Finset.mem_filter.mpr ⟨Finset.mem_univ _, edge ⟨i.val, by simpa using i.property⟩⟩⟩⟩
+        Finset.mem_filter.mpr ⟨Finset.mem_univ _, edge ⟨i.val, by simp⟩⟩⟩⟩
   have gi : Function.Injective g := by
     intro i j he
     have eq := inj (congrArg Subtype.val he)

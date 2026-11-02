@@ -39,7 +39,7 @@ theorem encodeUnweighted_bounds (E : Vector (Vector Bool n) n)
 theorem unit_balance (roots : Fin k → Fin n) (sizes : Fin k → Nat)
     (inj : Function.Injective roots) (positive : ∀ i, 0 < sizes i)
     (total : (∑ i, sizes i) = n) :
-    (∑ v ∈ Finset.univ.filter (fun v => ¬RootSet roots v), (1 : Nat)) ≤ ∑ i, (sizes i - 1) := by
+    (∑ _v ∈ Finset.univ.filter (fun v => ¬RootSet roots v), (1 : Nat)) ≤ ∑ i, (sizes i - 1) := by
   have hp := positive_capacity_sum (List.finRange k) sizes (fun i _ => positive i)
   rw [sumValues_finRange, sumValues_finRange, List.length_finRange, total] at hp
   have hl := nonterminals_length roots (fun _ _ h => inj h)

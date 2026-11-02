@@ -22,10 +22,9 @@ $w_{\max}-1$, where $w_{\max}$ is the largest non-terminal weight.
 
 ## Lean formalization (`lean/`)
 
-The 138 modules in [`lean/GyoriLovasz/`](lean/GyoriLovasz/) contain the rooted
-partition proofs, the generalized weighted theorem, and programs with proved
-polynomial bounds on their explicit cost counters. Lean and Mathlib are pinned
-to **4.19.0**.
+The [`Lean project`](lean/) includes proofs of the rooted partition theorem,
+its weighted generalization, and polynomial bounds for the formalized programs.
+It uses **Lean 4.19.0** and **Mathlib 4.19.0**.
 
 With [Elan](https://github.com/leanprover/elan) installed, run:
 
@@ -35,41 +34,25 @@ lake exe cache get
 lake build
 ```
 
-The default build imports every module and runs [`CheckAxioms.lean`](lean/CheckAxioms.lean).
-This audits all project proofs, safe definitions, and their dependencies,
-rejecting proof placeholders and any axioms other than `propext`, `Classical.choice`, and
-`Quot.sound`. The formalization has no `sorry` or `admit` proofs and introduces
-no additional axioms.
-
-The formal statement of the classical undirected theorem matches the prescribed
-roots, positive sizes, exact cardinalities, and connectivity conclusion above.
-The generalized directed results use the paper's **minimum-cut formulation** of
-essentiality. The bridge to its path-based definition via Menger's theorem is
-not formalized; the connectivity corollaries use ordinary vertex connectivity,
-which is stronger than the paper's directed terminal-connectivity hypothesis.
-The paper's separate near-linear DAG algorithm and appendix results are outside
-this formalization. See [`lean/README.md`](lean/README.md) for theorem entry points,
-the correspondence with the paper, and the cost model.
+The build checks all proofs and runs an axiom audit. The proofs contain no
+`sorry` or `admit`. See the [Lean documentation](lean/README.md) for the formal
+statements and scope.
 
 ## Appendix counterexample (`counterexample/`)
 
-The appendix considers **compact connectivity** and **local connectivity** as
-alternative conditions to our flow-essential assignment condition. The code here
-checks a counterexample specifically to **maintaining compact connectivity**:
-the condition holds initially, but deleting any edge or contracting any
-pre-terminal into an adjacent terminal destroys it. Thus this alternative
-condition cannot support the paper's contraction/edge-removal framework, even
-though it guarantees a valid partition. The example does not refute the
-Győri–Lovász theorem or the flow-essential assignment condition.
+The appendix explores **compact connectivity** and **local connectivity** as
+alternatives to the flow-essential assignment condition used by our algorithm.
+The code here demonstrates why compact connectivity cannot be maintained in
+the contraction/edge-removal framework: it constructs an instance satisfying
+the condition where every edge deletion and every contraction of a pre-terminal
+into an adjacent terminal destroys it.
 
-For completeness, a vertex is compact-connected to a terminal $t$ if it has
+A vertex is compact-connected to a terminal $t$ if it has
 $k$ internally vertex-disjoint paths to the terminal set, with at most one path
 ending at each terminal other than $t$. Following the appendix's convention,
 a vertex with a direct edge to $t$ is also compact-connected to $t$.
 The compact connectivity condition asks for an assignment of every non-terminal
-to a compact-connected terminal that fills every capacity exactly. Local
-connectivity is another condition discussed in the appendix; this script does
-not provide a counterexample to its contraction conjecture.
+to a compact-connected terminal that fills every capacity exactly.
 
 ### The instance
 

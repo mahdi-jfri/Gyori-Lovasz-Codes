@@ -1,17 +1,16 @@
 # Lean formalization
 
-This Lake project contains the 138 Lean modules extracted from the supplied
-formalization archive. The archived proof sources are unchanged. The toolchain
-is `leanprover/lean4:v4.19.0`; Mathlib is pinned to `v4.19.0`, commit
-`c44e0c8ee63ca166450922a373c7409c5d26b00b`, with transitive dependencies recorded
+This project uses **Lean 4.19.0** and **Mathlib 4.19.0**. Dependencies are pinned
 in [`lake-manifest.json`](lake-manifest.json).
+
+From this directory, run:
 
 ```sh
 lake exe cache get
 lake build
 ```
 
-[`GyoriLovasz.lean`](GyoriLovasz.lean) imports every archived module, including
+[`GyoriLovasz.lean`](GyoriLovasz.lean) imports every module, including
 the runtime development. The default build also compiles
 [`CheckAxioms.lean`](CheckAxioms.lean), which audits every safe project declaration
 and all transitive dependencies. Only `propext`, `Classical.choice`, and
@@ -19,16 +18,7 @@ and all transitive dependencies. Only `propext`, `Classical.choice`, and
 build. Classical choice is used in the mathematical development.
 Compiler-generated unsafe implementations are excluded from this logical audit.
 
-Verification on 2 November 2026: all 138 archived modules compiled with Lean
-4.19.0, and the axiom audit passed for 3,509 safe project declarations. The build
-emits style, unused-tactic, and deprecation warnings in the archived sources;
-there are no compilation errors or proof-placeholder warnings.
-
 ## Statements and correspondence with the paper
-
-The comparison is against `gyori.tex` and the section files it includes,
-especially `our-results.tex`, `Preliminaries.tex`, `main_section.tex`, and
-`weighted.tex`.
 
 All names below are in namespace `GyoriLovasz`, with `WordInstance.` added
 where shown.

@@ -131,6 +131,6 @@ def solveNormalized (N B bound : Nat) {n k : Nat} (s : Input n k)
 termination_by n
 decreasing_by
   all_goals simp_wf
-  all_goals first | assumption | omega | (convert smaller using 1 <;> omega)
+  all_goals first | assumption | omega | (convert smaller using 1)
 
 end GyoriLovasz.WordInstance

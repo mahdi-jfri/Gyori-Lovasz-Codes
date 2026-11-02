@@ -38,7 +38,8 @@ theorem flow_le_cut (G : Network n m) (source sink : Fin n) (f : Fin m → Nat)
     apply Finset.sum_le_sum
     intro e _
     have cap := feasible.1 e
-    cases h₁ : S (G.tail e) <;> cases h₂ : S (G.head e) <;> simp <;> omega
+    cases h₁ : S (G.tail e) <;> cases h₂ : S (G.head e) <;> simp
+    omega
   have cast : (∑ e, (if S (G.tail e) && !S (G.head e) then (G.capacity e : Int) else 0)) =
       (cutCapacity G S : Int) := by simp [cutCapacity]
   rw [cast] at upper

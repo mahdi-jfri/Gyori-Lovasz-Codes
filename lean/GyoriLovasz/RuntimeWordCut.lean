@@ -12,7 +12,7 @@ theorem thresholdCell_value (p : Vector SignedWord n) (source v : Fin n) :
   apply Bool.eq_iff_iff.mpr
   have h := compareSigned_correct p[source.val] p[v.val]
   simp only [thresholdCell, Bool.not_eq_true', decide_eq_true_eq]
-  cases hc : (compareSigned p[source.val] p[v.val]).1 <;> simp_all <;> omega
+  cases hc : (compareSigned p[source.val] p[v.val]).1 <;> simp_all
 
 theorem thresholdCell_cost (p : Vector SignedWord n) (B : Nat)
     (bound : ∀ v : Fin n, p[v.val].digits.length ≤ B) (source v : Fin n) :

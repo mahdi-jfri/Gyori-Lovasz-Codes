@@ -61,7 +61,7 @@ theorem builtGraph_weight (s : WordResidual n m) (correct : VertexCodesCorrect s
     match x with | none => 0 | some a => a.2.toNat) (buildWordResidual_value s correct u v)
   cases ht : (buildWordResidual s).1[u.val][v.val] <;>
     cases hb : bestArc (decodeNetwork s) (decodeFlow s) (decodePotential s) u v <;>
-    simpa [residualCost, ht, hb] using h
+    simp_all [residualCost]
 
 theorem builtGraph_bounds (s : WordResidual n m) (B : Nat) (bound : WordResidualBound s B)
     (u v : Fin n) :

@@ -32,7 +32,7 @@ theorem encodeColumns_value (fuel : Nat) (words : Vector (List Bool) m)
   induction fuel generalizing words with
   | zero =>
     funext e
-    have h : words[e.val] = [] := List.length_eq_zero.mp (Nat.eq_zero_of_le_zero (bound e))
+    have h : words[e.val] = [] := List.length_eq_zero_iff.mp (Nat.eq_zero_of_le_zero (bound e))
     simp [encodeColumns, binaryCapacity, h, value]
   | succ fuel ih =>
     have tails : ∀ e : Fin m,
