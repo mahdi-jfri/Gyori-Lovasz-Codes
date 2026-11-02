@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Independent small-instance oracle and end-to-end partition checks (stdlib only)."""
+"""Independent small-instance oracle, partition checks, and larger examples (stdlib only)."""
 
+import argparse
 import itertools
 from pathlib import Path
 import random
 import subprocess
-import sys
 import tempfile
+import time
 
 
 def encode(n, k, sizes, edges):
@@ -51,17 +52,21 @@ def applicable(n, k, sizes, edges):
     return capacity in states
 
 
-def check(binary, n, k, sizes, edges, expected=None):
+def check(binary, n, k, sizes, edges, expected=None, input_file=None):
     # Terminals are sinks, as in the manuscript and the input normalization.
     normalized = sorted({(u, v) for u, v in edges if u >= k and u != v})
     if expected is None:
         expected = applicable(n, k, sizes, normalized)
     data = encode(n, k, sizes, edges)
-    result = subprocess.run([binary], input=data, text=True, capture_output=True, timeout=20)
+    command = [binary, str(input_file)] if input_file else [binary]
+    start = time.perf_counter()
+    result = subprocess.run(command, input=None if input_file else data,
+                            text=True, capture_output=True, timeout=60)
+    elapsed = time.perf_counter() - start
     assert result.returncode == (0 if expected else 1), (data, result)
     if not expected:
         assert result.stdout.strip() == "Flow-essential assignment condition does not hold."
-        return
+        return elapsed
     lines = result.stdout.splitlines()
     assert lines[0] == "Flow-essential assignment condition holds.", (data, result)
     assert len(lines) == k + 1, (data, result)
@@ -81,6 +86,7 @@ def check(binary, n, k, sizes, edges, expected=None):
         assert reached == set(part), (data, result)
         all_vertices.extend(part)
     assert sorted(all_vertices) == list(range(n)), (data, result)
+    return elapsed
 
 
 def compositions(n, k):
@@ -89,8 +95,33 @@ def compositions(n, k):
         yield [ends[i + 1] - ends[i] for i in range(k)]
 
 
+def check_large_examples(binary):
+    examples = Path(__file__).parent / "examples" / "large"
+    paths = sorted(examples.glob("*.txt"), key=lambda path: int(path.stem.split("-")[-1]))
+    assert len(paths) == 5, "expected five larger examples; run examples/large/generate.py"
+    print("Larger examples (solver wall time; each partition checked independently):", flush=True)
+    print(f"{'Instance':<22} {'n':>4} {'m':>5} {'k':>3} {'Seconds':>9}", flush=True)
+    for path in paths:
+        data = list(map(int, path.read_text().split()))
+        n, m, k = data[:3]
+        assert len(data) == 3 + k + 2 * m
+        edges = list(zip(data[3 + k::2], data[4 + k::2]))
+        # These generated graphs have guaranteed k-terminal connectivity;
+        # the exponential small-instance applicability oracle is unnecessary.
+        elapsed = check(binary, n, k, data[3:3 + k], edges,
+                        expected=True, input_file=path)
+        print(f"{path.name:<22} {n:>4} {m:>5} {k:>3} {elapsed:>9.3f}", flush=True)
+
+
 def main():
-    binary = str(Path(sys.argv[1]).resolve())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("binary", help="path to the compiled gl_partition program")
+    parser.add_argument("--large-only", action="store_true", help="run just the five larger examples")
+    arguments = parser.parse_args()
+    binary = str(Path(arguments.binary).resolve())
+    if arguments.large_only:
+        check_large_examples(binary)
+        return
     count = 0
     for n in range(1, 5):
         for k in range(1, n + 1):
@@ -111,13 +142,6 @@ def main():
                  if random_generator.random() < density]
         check(binary, n, k, sizes, edges)
         count += 1
-
-    # A larger k-connected family: bidirectional powers of a cycle, with the
-    # first k vertices as terminals. Removing fewer than k vertices leaves it connected.
-    n, k = 80, 4
-    edges = [(u, (u + step) % n) for u in range(n)
-             for step in range(-k, k + 1) if step != 0]
-    check(binary, n, k, [20] * k, edges, expected=True)
 
     examples = Path(__file__).parent / "examples"
     for path in sorted(examples.glob("*.txt")):
@@ -142,7 +166,8 @@ def main():
         assert subprocess.run([binary, missing], capture_output=True).returncode == 2
         assert subprocess.run([binary, "a", "b"], capture_output=True).returncode == 2
     assert subprocess.run([binary, "--help"], capture_output=True).returncode == 0
-    print(f"Passed {count} exhaustive/random oracle cases, a larger graph, examples, and input checks.")
+    check_large_examples(binary)
+    print(f"Passed {count} exhaustive/random oracle cases, five larger examples, and input checks.")
 
 
 if __name__ == "__main__":

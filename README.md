@@ -45,6 +45,14 @@ With no filename, the program reads from standard input, so input can also be
 typed directly. See the [implementation guide](implementation/README.md) for the
 input format, algorithm explanation, examples, and tests.
 
+Five [larger examples](implementation/README.md#larger-examples) with **50–200
+vertices** demonstrate the implementation on sparse and denser graphs, with
+unequal part sizes. To run them, check the partitions, and print timings:
+
+```sh
+python3 implementation/test.py ./build/gl_partition --large-only
+```
+
 ## Lean formalization (`lean/`)
 
 The [`Lean project`](lean/) includes proofs of the rooted partition theorem,

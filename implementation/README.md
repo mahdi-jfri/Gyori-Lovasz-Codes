@@ -64,6 +64,37 @@ The program exits with code **0** on success, **1** when the flow-essential
 assignment condition fails, and **2** for invalid input or file errors.
 Failure of this sufficient condition does not imply that no partition exists.
 
+## Larger examples
+
+Five ready-to-run inputs in [`examples/large/`](examples/large/) have **50–200
+vertices**, **3–6 terminals**, and unequal prescribed part sizes. They include
+sparse directed graphs, a graph with edges in both directions, and graphs with
+additional random edges. Run all five and check every resulting partition:
+
+```sh
+python3 implementation/test.py ./build/gl_partition --large-only
+```
+
+One run in our environment (Intel Core i7-12700H, GCC 13.3, `-std=c++17 -O2`)
+gave the following results:
+
+| Input | Vertices | Directed edges | Terminals | Time (s) |
+| --- | ---: | ---: | ---: | ---: |
+| [directed-50.txt](examples/large/directed-50.txt) | 50 | 141 | 3 | 0.03 |
+| [bidirected-75.txt](examples/large/bidirected-75.txt) | 75 | 568 | 4 | 0.67 |
+| [chorded-100.txt](examples/large/chorded-100.txt) | 100 | 579 | 5 | 1.45 |
+| [chorded-150.txt](examples/large/chorded-150.txt) | 150 | 1,180 | 5 | 5.36 |
+| [chorded-200.txt](examples/large/chorded-200.txt) | 200 | 1,944 | 6 | 17.13 |
+
+Times include input, the applicability check, and partition construction;
+they exclude Python verification and vary by machine and load.
+
+To run one input directly:
+
+```sh
+./build/gl_partition implementation/examples/large/chorded-200.txt
+```
+
 ## How the code follows the paper
 
 A terminal is **essential** for a non-terminal vertex if deleting that terminal
@@ -126,7 +157,7 @@ python3 implementation/test.py ./build/gl_partition
 The tests enumerate every normalized directed graph with up to four vertices and
 every positive size vector, then check seeded random instances against an
 independent oracle that enumerates vertex separators and assignments. They also
-check a larger connected instance, both input modes, and malformed input.
+run the five larger examples, check both input modes, and check malformed input.
 Every returned partition is checked for vertex coverage, prescribed sizes,
 terminal membership, and directed reachability within each part in the original
 graph.
