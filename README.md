@@ -1,24 +1,49 @@
-# Győri–Lovász: Lean formalization and code
+# Győri–Lovász: Implementation and Lean formalization
 
-This repository contains a **Lean 4.19 formalization** and code
-accompanying *Breaking the Exponential Barrier: The First
-Polynomial-Time Algorithm for the Győri–Lovász Theorem*.
+The **Győri–Lovász theorem** says that a $k$-connected undirected graph can be partitioned
+into $k$ connected parts of any prescribed positive sizes, with a prescribed
+root in each part. More precisely, given distinct roots $t_1,\ldots,t_k$ and
+positive integers $n_1,\ldots,n_k$ summing to $|V(G)|$, there is a partition
+$V_1,\ldots,V_k$ such that $t_i\in V_i$, $|V_i|=n_i$, and each induced subgraph
+$G[V_i]$ is connected. We call the prescribed roots **terminals**.
 
-The Győri–Lovász theorem states that, given a $k$-connected undirected graph $G$,
-distinct roots $t_1,\ldots,t_k$, and positive integers $n_1,\ldots,n_k$ with
-$\sum_i n_i=|V(G)|$, the vertices can be partitioned into sets $V_1,\ldots,V_k$
-such that $t_i\in V_i$, $|V_i|=n_i$, and each induced subgraph $G[V_i]$ is connected.
-The paper gives a polynomial-time algorithm for finding such a partition.
-Its directed version assumes that every non-terminal has $k$ directed paths to
-distinct terminals, pairwise disjoint except at their starting vertex; each
-vertex must then reach its terminal within its own part.
+In our paper, [*Breaking the Exponential Barrier: The First Polynomial-Time
+Algorithm for the Győri–Lovász Theorem*](https://arxiv.org/abs/2608.30945),
+we give the first polynomial-time algorithm for constructing these partitions.
+Our algorithm also handles Lovász's stronger directed version: if every
+non-terminal has $k$ directed paths to distinct terminals, pairwise
+vertex-disjoint except at their starting vertex, we construct parts of the
+prescribed sizes in which every vertex reaches its terminal. The paper also
+extends the framework to weighted generalizations.
 
-The algorithm maintains a **flow-essential assignment**: every non-terminal is
-assigned to a terminal whose deletion decreases its terminal connectivity, and
-each terminal receives its prescribed number of vertices. This combines cut
-structure with capacity constraints. The paper also gives a weighted extension,
-allowing each part's non-terminal weight to exceed its capacity by at most
-$w_{\max}-1$, where $w_{\max}$ is the largest non-terminal weight.
+The central idea is a **flow-essential assignment**, which combines connectivity
+with the prescribed sizes. Each non-terminal is assigned to a terminal whose
+deletion decreases its terminal connectivity, and each terminal receives its
+prescribed number of non-terminal vertices. Maintaining this condition lets the algorithm
+build the partition through edge deletions and contractions.
+
+This repository makes the results available as a readable **C++ implementation**,
+a **Lean formalization** of the theorems and algorithms, and code checking the
+**appendix counterexample**. The sections below explain how to run each component.
+
+## Implementation (`implementation/`)
+
+The [C++17 implementation](implementation/) follows the paper's original
+algorithm for **directed, unweighted graphs**. It first checks whether the
+flow-essential assignment condition holds and, when it does, finds the partition.
+The code keeps the main algorithm in one readable source file, with separate
+headers for max flow and input/output.
+
+```sh
+mkdir -p build
+g++ -std=c++17 -O2 -Wall -Wextra -pedantic implementation/main.cpp -o build/gl_partition
+./build/gl_partition implementation/examples/cycle.txt
+./build/gl_partition < implementation/examples/small.txt
+```
+
+With no filename, the program reads from standard input, so input can also be
+typed directly. See the [implementation guide](implementation/README.md) for the
+input format, algorithm explanation, examples, and tests.
 
 ## Lean formalization (`lean/`)
 
