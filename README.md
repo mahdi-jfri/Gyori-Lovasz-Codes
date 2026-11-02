@@ -10,21 +10,32 @@ $G[V_i]$ is connected. We call the prescribed roots **terminals**.
 In our paper, [*Breaking the Exponential Barrier: The First Polynomial-Time
 Algorithm for the Győri–Lovász Theorem*](https://arxiv.org/abs/2608.30945),
 we give the first polynomial-time algorithm for constructing these partitions.
-Our algorithm also handles Lovász's stronger directed version: if every
-non-terminal has $k$ directed paths to distinct terminals, pairwise
-vertex-disjoint except at their starting vertex, we construct parts of the
-prescribed sizes in which every vertex reaches its terminal. The paper also
-extends the framework to weighted generalizations.
-
-The central idea is a **flow-essential assignment**, which combines connectivity
-with the prescribed sizes. Each non-terminal is assigned to a terminal whose
-deletion decreases its terminal connectivity, and each terminal receives its
-prescribed number of non-terminal vertices. Maintaining this condition lets the algorithm
-build the partition through edge deletions and contractions.
+The central idea is a **flow-essential assignment**, which brings together graph
+connectivity and the prescribed part sizes, allowing us to build the partition
+step by step. The same framework also handles Lovász's stronger directed version
+and weighted generalizations.
 
 This repository makes the results available as a readable **C++ implementation**,
 a **Lean formalization** of the theorems and algorithms, and code checking the
 **appendix counterexample**. The sections below explain how to run each component.
+
+## Lean formalization (`lean/`)
+
+The [`Lean project`](lean/) includes proofs of the rooted partition theorem,
+its weighted generalization, and polynomial bounds for the formalized programs.
+It uses **Lean 4.19.0** and **Mathlib 4.19.0**.
+
+With [Elan](https://github.com/leanprover/elan) installed, run:
+
+```sh
+cd lean
+lake exe cache get
+lake build
+```
+
+The build checks all proofs and runs an axiom audit. The proofs contain no
+`sorry` or `admit`. See the [Lean documentation](lean/README.md) for the formal
+statements and scope.
 
 ## Implementation (`implementation/`)
 
@@ -53,23 +64,15 @@ unequal part sizes. To run them, check the partitions, and print timings:
 python3 implementation/test.py ./build/gl_partition --large-only
 ```
 
-## Lean formalization (`lean/`)
+One run on an Intel Core i7-12700H with GCC 13.3 (`-std=c++17 -O2`) gave:
 
-The [`Lean project`](lean/) includes proofs of the rooted partition theorem,
-its weighted generalization, and polynomial bounds for the formalized programs.
-It uses **Lean 4.19.0** and **Mathlib 4.19.0**.
-
-With [Elan](https://github.com/leanprover/elan) installed, run:
-
-```sh
-cd lean
-lake exe cache get
-lake build
-```
-
-The build checks all proofs and runs an axiom audit. The proofs contain no
-`sorry` or `admit`. See the [Lean documentation](lean/README.md) for the formal
-statements and scope.
+| Input | Vertices | Directed edges | Terminals | Time (s) |
+| --- | ---: | ---: | ---: | ---: |
+| [directed-50.txt](implementation/examples/large/directed-50.txt) | 50 | 141 | 3 | 0.03 |
+| [bidirected-75.txt](implementation/examples/large/bidirected-75.txt) | 75 | 568 | 4 | 0.67 |
+| [chorded-100.txt](implementation/examples/large/chorded-100.txt) | 100 | 579 | 5 | 1.45 |
+| [chorded-150.txt](implementation/examples/large/chorded-150.txt) | 150 | 1,180 | 5 | 5.36 |
+| [chorded-200.txt](implementation/examples/large/chorded-200.txt) | 200 | 1,944 | 6 | 17.13 |
 
 ## Appendix counterexample (`counterexample/`)
 
